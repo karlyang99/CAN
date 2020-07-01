@@ -5,24 +5,26 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+		_ "github.com/influxdata/influxdb1-client"
+	client "github.com/influxdata/influxdb1-client/v2"
 	/*"path/filepath"*/)
 
 func main() {
 	p := "one.csv"
 	records, err := readCSV(p)
-	for i := 0; i < len(records); i++ {
+	for i := 0; i < 10; i++ {
 		fmt.Println(records[i])
 		a, errr := strconv.Atoi(records[i][2])
 		aa := uint32(a)
 		b, errr := strconv.Atoi(records[i][3])
-		byteB := byte(b)
+		//byteB := byte(b)
 		c, errr := strconv.Atoi(records[i][4])
-		byteC := byte(c)
+		//byteC := byte(c)
 		d, errr := strconv.Atoi(records[i][5])
-		byteD := byte(d)
+		//byteD := byte(d)
 		if errr != nil {
 		}
-		influxdbwrite(aa, byteB, byteC, byteD)
+		influxdbwrite(aa, b,c,d)
 	}
 	if err != nil {
 	}
@@ -43,6 +45,43 @@ func readCSV(path string) ([][]string, error) {
 	return fields, nil
 }
 
-func influxdbwrite(alpha uint32, beta byte, charlie byte, delta byte) {
+func influxdbwrite(id uint32, current  int, voltage  int, tempareture int) {
+	c, err := client.NewHTTPClient(client.HTTPConfig{
+		Addr: "http://localhost:8086",
+	})
 
+	if err != nil {
+		fmt.Println("Error creating InfluxDB Client: ", err.Error())
+	}
+	defer c.Close()
+
+	// Create a new point batch
+	bp, _ := client.NewBatchPoints(client.BatchPointsConfig{
+		Database: "Testing",
+		// Precision: "s",
+	})
+
+	// Create a point and add to batch
+	tags := map[string]string{"battery": "176"} // 0D0
+	fields := map[string]interface{}{
+		"current":     10,
+		"voltage":     20,
+		"tempareture": 30,
+	}
+	
+// fmt.Println(id, tags,fields)
+	tags["battery"] = strconv.FormatUint(uint64(id), 10)
+	fields["current"] = current
+	fields["voltage"] = voltage
+	fields["tempareture"] = tempareture
+
+	// pt, err := client.NewPoint("battery", tags, fields, time.Now())
+	pt, err := client.NewPoint("battery", tags, fields)
+	if err != nil {
+		fmt.Println("Error: ", err.Error())
+	}
+	bp.AddPoint(pt)
+
+	// Write the batch
+	c.Write(bp)
 }
