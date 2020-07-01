@@ -4,17 +4,19 @@ import (
 	"encoding/csv"
 	"fmt"
 	"os"
-	"path/filepath"
+	/*"path/filepath"*/
 )
 
 func main() {
-	p, err := filepath.Abs(`C:\Users\Cedar\Documents\GitHub\CAN\1.csv`)
+	p := "one.csv"
 	records, err := readCSV(p)
 	for i := 0; i < len(records); i++ {
 		fmt.Println(records[i])
+		/*influxdb_write(records[i][*/
 	}
 	if err != nil {
 	}
+	fmt.Println("hi")
 }
 
 func readCSV(path string) ([][]string, error) {
