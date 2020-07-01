@@ -4,15 +4,25 @@ import (
 	"encoding/csv"
 	"fmt"
 	"os"
-	/*"path/filepath"*/
-)
+	"strconv"
+	/*"path/filepath"*/)
 
 func main() {
 	p := "one.csv"
 	records, err := readCSV(p)
 	for i := 0; i < len(records); i++ {
 		fmt.Println(records[i])
-		/*influxdb_write(records[i][*/
+		a, errr := strconv.Atoi(records[i][2])
+		aa := uint32(a)
+		b, errr := strconv.Atoi(records[i][3])
+		byteB := byte(b)
+		c, errr := strconv.Atoi(records[i][4])
+		byteC := byte(c)
+		d, errr := strconv.Atoi(records[i][5])
+		byteD := byte(d)
+		if errr != nil {
+		}
+		influxdbwrite(aa, byteB, byteC, byteD)
 	}
 	if err != nil {
 	}
@@ -31,4 +41,8 @@ func readCSV(path string) ([][]string, error) {
 	fields, err := reader.ReadAll()
 
 	return fields, nil
+}
+
+func influxdbwrite(alpha uint32, beta byte, charlie byte, delta byte) {
+
 }
