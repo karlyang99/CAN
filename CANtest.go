@@ -19,13 +19,13 @@ func main() {
 		id := uint32(ids)
 		b, errr := strconv.Atoi(records[i][4])
 		c, errr := strconv.Atoi(records[i][5])
-		current := ((c/10)*4096 + (c%10)*256 + (b/10)*16 + (b%10))/100.0
+		current = ((c/10)*4096 + (c%10)*256 + (b/10)*16 + (b%10))/100.0
 		d, errr := strconv.Atoi(records[i][6])
 		e, errr := strconv.Atoi(records[i][7])
-		power := ((e/10)*4096 + (e%10)*256 + (d/10)*16 + (d%10))/10.0
+		power = ((e/10)*4096 + (e%10)*256 + (d/10)*16 + (d%10))/10.0
 		f, errr := strconv.Atoi(records[i][8])
 		g, errr := strconv.Atoi(records[i][9])
-		voltage : = ((g/10)*4096 + (g%10)*256 + (f/10)*16 + (f%10))/100.0
+		voltage = ((g/10)*4096 + (g%10)*256 + (f/10)*16 + (f%10))/100.0
 		if errr != nil {
 		}
 		influxdbwrite(id, current, power, voltage)
