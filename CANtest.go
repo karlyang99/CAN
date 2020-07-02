@@ -14,17 +14,20 @@ func main() {
 	records, err := readCSV(p)
 	for i := 0; i < 10; i++ {
 		fmt.Println(records[i])
-		a, errr := strconv.Atoi(records[i][2])
-		aa := uint32(a)
-		b, errr := strconv.Atoi(records[i][3])
-		//byteB := byte(b)
-		c, errr := strconv.Atoi(records[i][4])
-		//byteC := byte(c)
-		d, errr := strconv.Atoi(records[i][5])
-		//byteD := byte(d)
+		ids, errr := strconv.Atoi(records[i][1])
+		id := uint32(a)
+		b, errr := strconv.Atoi(records[i][4])
+		c, errr := strconv.Atoi(records[i][5])
+		current = ((c/10)*4096 + (c%10)*256 + (b/10)*16 + (b%10))/100.0
+		d, errr := strconv.Atoi(records[i][6])
+		e, errr := strconv.Atoi(records[i][7])
+		power = ((e/10)*4096 + (e%10)*256 + (d/10)*16 + (d%10))/10.0
+		f, errr := strconv.Atoi(records[i][8])
+		g, errr := strconv.Atoi(records[i][9])
+		voltage = ((g/10)*4096 + (g%10)*256 + (f/10)*16 + (f%10))/100.0
 		if errr != nil {
 		}
-		influxdbwrite(aa, b,c,d)
+		influxdbwrite(id, current, power, voltage)
 	}
 	if err != nil {
 	}
@@ -45,7 +48,7 @@ func readCSV(path string) ([][]string, error) {
 	return fields, nil
 }
 
-func influxdbwrite(id uint32, current  int, voltage  int, tempareture int) {
+func influxdbwrite(id uint32, current  int, power  int, voltage int) {
 	c, err := client.NewHTTPClient(client.HTTPConfig{
 		Addr: "http://localhost:8086",
 	})
@@ -57,7 +60,7 @@ func influxdbwrite(id uint32, current  int, voltage  int, tempareture int) {
 
 	// Create a new point batch
 	bp, _ := client.NewBatchPoints(client.BatchPointsConfig{
-		Database: "Testing",
+		Database: "Testing2",
 		// Precision: "s",
 	})
 
@@ -72,8 +75,8 @@ func influxdbwrite(id uint32, current  int, voltage  int, tempareture int) {
 // fmt.Println(id, tags,fields)
 	tags["battery"] = strconv.FormatUint(uint64(id), 10)
 	fields["current"] = current
+	fields["power"] = power
 	fields["voltage"] = voltage
-	fields["tempareture"] = tempareture
 
 	// pt, err := client.NewPoint("battery", tags, fields, time.Now())
 	pt, err := client.NewPoint("battery", tags, fields)
