@@ -14,6 +14,7 @@ func main() {
 	records, err := readCSV(p)
 	for i := 0; i < 10; i++ {
 		fmt.Println(records[i])
+		current, power, voltage := 0
 		ids, errr := strconv.Atoi(records[i][1])
 		id := uint32(ids)
 		b, errr := strconv.Atoi(records[i][4])
