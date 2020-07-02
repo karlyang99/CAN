@@ -65,13 +65,13 @@ func influxdbwrite(id uint32, current  int, power  int, voltage int) {
 		// Precision: "s",
 	})
 
-	// Create a point and add to batch
+	/* Create a point and add to batch
 	tags := map[string]string{"battery": "176"} // 0D0
 	fields := map[string]interface{}{
 		"current":     10,
 		"voltage":     20,
 		"tempareture": 30,
-	}
+	}*/
 	
 // fmt.Println(id, tags,fields)
 	tags["battery"] = strconv.FormatUint(uint64(id), 10)
