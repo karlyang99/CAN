@@ -12,7 +12,7 @@ import (
 func main() {
 	p := "one.csv"
 	records, err := readCSV(p)
-	for i := 0; i < 10; i++ {
+	for i := 0; i < len(records); i++ {
 		fmt.Println(records[i])
 		current, power, voltage := 0, 0, 0
 		ids, errr := strconv.Atoi(records[i][1])
