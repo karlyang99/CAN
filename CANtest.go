@@ -19,8 +19,8 @@ func main() {
 		id := uint32(ids)
 		//b, errr := strconv.ParseInt(records[i][4], 16, 64)
 		c, errr := strconv.ParseInt(records[i][5]+records[i][4], 16, 64)
-		c = float64(c)
-		current := (c)/1000.0
+		fc = float64(c)
+		current := (fc)/1000.0
 		//d, errr := strconv.ParseInt(records[i][6], 16, 64)
 		e, errr := strconv.ParseInt(records[i][7]+records[i][6], 16, 64)
 		power := (e)/100
