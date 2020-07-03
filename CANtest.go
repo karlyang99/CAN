@@ -10,9 +10,9 @@ import (
 	/*"path/filepath"*/)
 
 func main() {
-	p := "four.csv"
+	p := "one.csv"
 	records, err := readCSV(p)
-	for i := 0; i < /*len(records)*/ 10; i++ {
+	for i := 0; i < len(records); i++ {
 		fmt.Println(records[i])
 		//current, power, voltage := 0.0, 0.0, 0.0
 		ids, errr := strconv.ParseInt(records[i][1], 16, 64)
@@ -29,11 +29,10 @@ func main() {
 		if errr != nil {
 		}
 		influxdbwrite(id, current, power, voltage)
-		fmt.Println(current, voltage, power)
 	}
 	if err != nil {
 	}
-	fmt.Println("hi")
+	fmt.Println("Finished!")
 }
 
 func readCSV(path string) ([][]string, error) {
