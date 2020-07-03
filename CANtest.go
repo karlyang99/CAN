@@ -15,17 +15,18 @@ func main() {
 	for i := 0; i < len(records); i++ {
 		fmt.Println(records[i])
 		current, power, voltage := 0, 0, 0
+		stredit := "00"
 		ids, errr := strconv.ParseInt(records[i][1], 16, 64)
 		id := uint32(ids)
 		b, errr := strconv.ParseInt(records[i][4], 16, 64)
-		c, errr := strconv.ParseInt(records[i][5], 16, 64)
-		current = ((c/10)*4096 + (c%10)*256 + (b/10)*16 + (b%10))/100.0
+		c, errr := strconv.ParseInt(records[i][5]+stredit, 16, 64)
+		current = (c+b)/100.0
 		d, errr := strconv.ParseInt(records[i][6], 16, 64)
-		e, errr := strconv.ParseInt(records[i][7], 16, 64)
-		power = ((e/10)*4096 + (e%10)*256 + (d/10)*16 + (d%10))/10.0
+		e, errr := strconv.ParseInt(records[i][7]+stredit, 16, 64)
+		power = (e+d)/10.0
 		f, errr := strconv.ParseInt(records[i][8], 16, 64)
-		g, errr := strconv.ParseInt(records[i][9], 16, 64)
-		voltage = ((g/10)*4096 + (g%10)*256 + (f/10)*16 + (f%10))/100.0
+		g, errr := strconv.ParseInt(records[i][9]+stredit, 16, 64)
+		voltage = (g+f)/100.0
 		if errr != nil {
 		}
 		influxdbwrite(id, current, power, voltage)
