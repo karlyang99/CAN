@@ -19,7 +19,8 @@ func main() {
 		id := uint32(ids)
 		//b, errr := strconv.ParseInt(records[i][4], 16, 64)
 		c, errr := strconv.ParseInt(records[i][5]+records[i][4], 16, 64)
-		current := (c)/1000
+		c = float64(c)
+		current := (c)/1000.0
 		//d, errr := strconv.ParseInt(records[i][6], 16, 64)
 		e, errr := strconv.ParseInt(records[i][7]+records[i][6], 16, 64)
 		power := (e)/100
@@ -49,7 +50,7 @@ func readCSV(path string) ([][]string, error) {
 	return fields, nil
 }
 
-func influxdbwrite(id uint32, current  int64, power  int64, voltage int64) {
+func influxdbwrite(id uint32, current  float64, power  int64, voltage int64) {
 	c, err := client.NewHTTPClient(client.HTTPConfig{
 		Addr: "http://localhost:8086",
 	})
