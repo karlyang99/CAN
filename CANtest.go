@@ -19,13 +19,13 @@ func main() {
 		id := uint32(ids)
 		//b, errr := strconv.ParseInt(records[i][4], 16, 64)
 		c, errr := strconv.ParseInt(records[i][5]+records[i][4], 16, 64)
-		current = (c)/100.0
+		current = (c)/100
 		//d, errr := strconv.ParseInt(records[i][6], 16, 64)
 		e, errr := strconv.ParseInt(records[i][7]+records[i][6], 16, 64)
-		power = (e)/10.0
+		power = (e)/10
 		//f, errr := strconv.ParseInt(records[i][8], 16, 64)
 		g, errr := strconv.ParseInt(records[i][9]+records[i][8], 16, 64)
-		voltage = (g)/100.0
+		voltage = (g)/100
 		if errr != nil {
 		}
 		influxdbwrite(id, current, power, voltage)
