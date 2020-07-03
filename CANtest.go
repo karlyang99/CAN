@@ -14,7 +14,7 @@ func main() {
 	records, err := readCSV(p)
 	for i := 0; i < /*len(records)*/ 10; i++ {
 		fmt.Println(records[i])
-		current, power, voltage := 0, 0, 0
+		current, power, voltage := 0.0, 0.0, 0.0
 		ids, errr := strconv.ParseInt(records[i][1], 16, 64)
 		id := uint32(ids)
 		//b, errr := strconv.ParseInt(records[i][4], 16, 64)
@@ -50,7 +50,7 @@ func readCSV(path string) ([][]string, error) {
 	return fields, nil
 }
 
-func influxdbwrite(id uint32, current  int, power  int, voltage int) {
+func influxdbwrite(id uint32, current  int64, power  int64, voltage int64) {
 	c, err := client.NewHTTPClient(client.HTTPConfig{
 		Addr: "http://localhost:8086",
 	})
