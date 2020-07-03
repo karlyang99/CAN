@@ -10,7 +10,7 @@ import (
 	/*"path/filepath"*/)
 
 func main() {
-	p := "four.csv"
+	p := "three.csv"
 	records, err := readCSV(p)
 	for i := 0; i < len(records); i++ {
 		fmt.Println(records[i])
@@ -61,7 +61,7 @@ func influxdbwrite(id uint32, current  int64, power  int64, voltage int64) {
 
 	// Create a new point batch
 	bp, _ := client.NewBatchPoints(client.BatchPointsConfig{
-		Database: "Testing4",
+		Database: "Testing3",
 		// Precision: "s",
 	})
 
