@@ -38,7 +38,7 @@ func main() {
 func readCSV(path string) ([][]string, error) {
 	csvfile, err := os.Open(path)
 	if err != nil {
-		return nil, errthree
+		return nil, err
 	}
 
 	defer csvfile.Close()
