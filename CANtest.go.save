@@ -10,30 +10,24 @@ import (
 	/*"path/filepath"*/)
 
 func main() {
-	p := "two.csv"
+	p := "one.csv"
 	records, err := readCSV(p)
-	for i := 0; i < len(records); i++ {
+	for i := 0; i < 10; i++ {
 		fmt.Println(records[i])
-		//current, power, voltage := 0.0, 0.0, 0.0
-		ids, errr := strconv.ParseInt(records[i][1], 16, 64)
-		id := uint32(ids)
-		//b, errr := strconv.ParseInt(records[i][4], 16, 64)
-		c, errr := strconv.ParseInt(records[i][5]+records[i][4], 16, 64)
-		fc := float64(c)
-		current := (fc)/1000.0
-		//d, errr := strconv.ParseInt(records[i][6], 16, 64)
-		e, errr := strconv.ParseInt(records[i][7]+records[i][6], 16, 64)
-		power := (e)/100
-		//f, errr := strconv.ParseInt(records[i][8], 16, 64)
-		g, errr := strconv.ParseInt(records[i][9]+records[i][8], 16, 64)
-		voltage := (g)/100
+		a, errr := strconv.Atoi(records[i][1])
+		aa := uint32(a)
+		b, errr := strconv.Atoi(records[i][4])
+		//byteB := byte(b)
+		c, errr := strconv.Atoi(records[i][5])
+		//byteC := byte(c)
+		d, errr := strconv.Atoi(records[i][6])
 		if errr != nil {
 		}
-		influxdbwrite(id, current, power, voltage)
+		influxdbwrite(aa, b,c,d)
 	}
 	if err != nil {
 	}
-	fmt.Println("Finished!")
+	fmt.Println("hi")
 }
 
 func readCSV(path string) ([][]string, error) {
@@ -50,7 +44,7 @@ func readCSV(path string) ([][]string, error) {
 	return fields, nil
 }
 
-func influxdbwrite(id uint32, current  float64, power  int64, voltage int64) {
+func influxdbwrite(id uint32, current  int, voltage  int, tempareture int) {
 	c, err := client.NewHTTPClient(client.HTTPConfig{
 		Addr: "http://localhost:8086",
 	})
@@ -62,23 +56,23 @@ func influxdbwrite(id uint32, current  float64, power  int64, voltage int64) {
 
 	// Create a new point batch
 	bp, _ := client.NewBatchPoints(client.BatchPointsConfig{
-		Database: "Testing2",
+		Database: "Testing",
 		// Precision: "s",
 	})
 
-	//Create a point and add to batch
+	// Create a point and add to batch
 	tags := map[string]string{"battery": "176"} // 0D0
 	fields := map[string]interface{}{
-		"current":     	10,
-		"power":	20,
-		"voltage": 	30,
+		"current":     10,
+		"voltage":     20,
+		"tempareture": 30,
 	}
 	
 // fmt.Println(id, tags,fields)
 	tags["battery"] = strconv.FormatUint(uint64(id), 10)
 	fields["current"] = current
-	fields["power"] = power
 	fields["voltage"] = voltage
+	fields["tempareture"] = tempareture
 
 	// pt, err := client.NewPoint("battery", tags, fields, time.Now())
 	pt, err := client.NewPoint("battery", tags, fields)
