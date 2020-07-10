@@ -1,4 +1,4 @@
- 
+//create a random point and write it into CAN-BUS
 package main
 
 import(
