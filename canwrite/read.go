@@ -1,3 +1,4 @@
+//Read a message from CANBUS connection, write message into kafka
 package main
 
 import(
@@ -8,24 +9,26 @@ import(
 )
 
 func main(){
+	//Create canbus socket to receive messages
 	sck, err := canbus.New()
         err = sck.Bind("can0")
         if err != nil{
-                fmt.Println("theres an error")
+                fmt.Println("Error in creating socket")
         }
 	for{
-		id, data, er := sck.Recv()
-		if er != nil{
-			fmt.Println("error in pt2")
+		id, data, err := sck.Recv()
+		if err != nil{
+			fmt.Println("Error in socket hanging/recieving")
 		}
+		//print out recieved message from CAN-bus
 		str := fmt.Sprint("ID:",id , " Data:",data)
 		fmt.Println(str)
+		//create go sub process for individual string so loop does not hang
 		go func(){
 			s := string(data)
 			kafkawrite(s)
 		}()
 	}
-	fmt.Println("go away")
 }
 
 
