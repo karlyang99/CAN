@@ -1,3 +1,4 @@
+//read in csv directly to influxdb
 package main
 
 import (
@@ -14,17 +15,13 @@ func main() {
 	records, err := readCSV(p)
 	for i := 0; i < len(records); i++ {
 		fmt.Println(records[i])
-		//current, power, voltage := 0.0, 0.0, 0.0
 		ids, errr := strconv.ParseInt(records[i][1], 16, 64)
 		id := uint32(ids)
-		//b, errr := strconv.ParseInt(records[i][4], 16, 64)
 		c, errr := strconv.ParseInt(records[i][5]+records[i][4], 16, 64)
 		fc := float64(c)
 		current := (fc)/1000.0
-		//d, errr := strconv.ParseInt(records[i][6], 16, 64)
 		e, errr := strconv.ParseInt(records[i][7]+records[i][6], 16, 64)
 		power := (e)/100
-		//f, errr := strconv.ParseInt(records[i][8], 16, 64)
 		g, errr := strconv.ParseInt(records[i][9]+records[i][8], 16, 64)
 		voltage := (g)/100
 		if errr != nil {
@@ -37,16 +34,14 @@ func main() {
 }
 
 func readCSV(path string) ([][]string, error) {
+	//convert a csv file into 2d string slice (Requires a rectangular data set)
 	csvfile, err := os.Open(path)
 	if err != nil {
 		return nil, err
 	}
-
 	defer csvfile.Close()
-
 	reader := csv.NewReader(csvfile)
 	fields, err := reader.ReadAll()
-
 	return fields, nil
 }
 
