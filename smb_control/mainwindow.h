@@ -58,6 +58,8 @@
 
 #include <QtSerialPort/QSerialPort>
 
+#include <QSlider>
+
 QT_BEGIN_NAMESPACE
 
 class QLabel;
@@ -78,13 +80,14 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-
 private slots:
     void openSerialPort();
     void closeSerialPort();
     void about();
     void writeData(const QByteArray &data);
     void readData();
+
+    void on_valueChanged(int value);
 
     void handleError(QSerialPort::SerialPortError error);
 
@@ -97,6 +100,7 @@ private:
     Ui::MainWindow *ui;
     QLabel *status;
     Console *console;
+    QSlider *slider;
     SettingsDialog *settings;
     QSerialPort *serial;
 };

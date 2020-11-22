@@ -52,7 +52,6 @@
 #include <QApplication>
 
 #include "mainwindow.h"
-
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
@@ -60,3 +59,22 @@ int main(int argc, char *argv[])
     w.show();
     return a.exec();
 }
+
+/*
+extern void g_writeData(const QByteArray &data);
+
+MainWindow *v;
+int main(int argc, char *argv[])
+{
+    QApplication a(argc, argv);
+    MainWindow w;
+    w.show();
+    v = &w;
+    return a.exec();
+}
+
+void g_writeData(const QByteArray &data)
+{
+    v->writeData(data);
+}
+*/

@@ -1,4 +1,4 @@
-/****************************************************************************
+﻿/****************************************************************************
 **
 ** Copyright (C) 2012 Denis Shienkov <denis.shienkov@gmail.com>
 ** Copyright (C) 2012 Laszlo Papp <lpapp@kde.org>
@@ -57,6 +57,9 @@
 #include <QMessageBox>
 #include <QLabel>
 #include <QtSerialPort/QSerialPort>
+#include <QVBoxLayout>
+#include <QSlider>
+#include <QDebug>
 
 //! [0]
 MainWindow::MainWindow(QWidget *parent) :
@@ -67,7 +70,18 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     console = new Console;
     console->setEnabled(false);
-    setCentralWidget(console);
+    // setCentralWidget(console);
+    // ui->centralWidget->setLayout(new QVBoxLayout);
+    ui->centralWidget->layout()->addWidget(console);
+
+    slider = new QSlider(this);
+    // slider->resize(255, 20);
+    slider->setOrientation(Qt::Horizontal);
+    // slider->setRange(0, 255);
+    ui->centralWidget->layout()->addWidget(slider);
+
+    connect(slider, SIGNAL(valueChanged(int)), this, SLOT(on_valueChanged(int)));
+
 //! [1]
     serial = new QSerialPort(this);
 //! [1]
@@ -93,6 +107,27 @@ MainWindow::MainWindow(QWidget *parent) :
 //! [3]
 }
 //! [3]
+
+void MainWindow::on_valueChanged(int value)
+{
+    qDebug() << value;
+    // ui->progressBar->setValue(value);
+    value *=20;
+    if(value < 20){
+        value = 20;
+    }
+    if (value > 4000){
+        value = 4000;
+    }
+    QString temp = QString::number(value,10);
+    while (temp.length()<4){
+        temp = "0" + temp;
+    }
+    //QString temp = QString::number(value*20,10);
+    qDebug() << temp;
+    // sliderValue = temp;
+    writeData(temp.toUtf8());
+}
 
 MainWindow::~MainWindow()
 {

@@ -98,6 +98,8 @@ private slots:
     void checkCustomBaudRatePolicy(int idx);
     void checkCustomDevicePathPolicy(int idx);
 
+    // void on_horizontalSlider_valueChanged(int value);
+
 private:
     void fillPortsParameters();
     void fillPortsInfo();

@@ -55,6 +55,7 @@
 #include <QtSerialPort/QSerialPortInfo>
 #include <QIntValidator>
 #include <QLineEdit>
+// #include <QDebug>
 
 QT_USE_NAMESPACE
 
@@ -136,9 +137,9 @@ void SettingsDialog::checkCustomDevicePathPolicy(int idx)
 
 void SettingsDialog::fillPortsParameters()
 {
+    ui->baudRateBox->addItem(QStringLiteral("38400"), QSerialPort::Baud38400);
     ui->baudRateBox->addItem(QStringLiteral("9600"), QSerialPort::Baud9600);
     ui->baudRateBox->addItem(QStringLiteral("19200"), QSerialPort::Baud19200);
-    ui->baudRateBox->addItem(QStringLiteral("38400"), QSerialPort::Baud38400);
     ui->baudRateBox->addItem(QStringLiteral("115200"), QSerialPort::Baud115200);
     ui->baudRateBox->addItem(tr("Custom"));
 
@@ -221,3 +222,28 @@ void SettingsDialog::updateSettings()
 
     currentSettings.localEchoEnabled = ui->localEchoCheckBox->isChecked();
 }
+
+/*
+extern void g_writeData(const QByteArray &data);
+
+void SettingsDialog::on_horizontalSlider_valueChanged(int value)
+{
+    qDebug() << value;
+    ui->progressBar->setValue(value);
+    value *=20;
+    if(value < 20){
+        value = 20;
+    }
+    if (value > 4000){
+        value = 4000;
+    }
+    QString temp = QString::number(value,10);
+    while (temp.length()<4){
+        temp = "0" + temp;
+    }
+    //QString temp = QString::number(value*20,10);
+    qDebug() << temp;
+    // sliderValue = temp;
+    g_writeData(temp.toUtf8());
+}
+*/
