@@ -59,6 +59,8 @@
 #include <QtSerialPort/QSerialPort>
 
 #include <QSlider>
+#include <QScrollBar>
+#include <QDial>
 
 QT_BEGIN_NAMESPACE
 
@@ -87,12 +89,15 @@ private slots:
     void writeData(const QByteArray &data);
     void readData();
 
-    void on_valueChanged(int value);
+    void on_slider_valueChanged(int value);
+    void on_scroll_valueChanged(int value);
+    void on_dial_valueChanged(int value);
 
     void handleError(QSerialPort::SerialPortError error);
 
 private:
     void initActionsConnections();
+    void on_valueChanged(int value);
 
 private:
     void showStatusMessage(const QString &message);
@@ -101,6 +106,8 @@ private:
     QLabel *status;
     Console *console;
     QSlider *slider;
+    QScrollBar *scroll;
+    QDial *dial;
     SettingsDialog *settings;
     QSerialPort *serial;
 };

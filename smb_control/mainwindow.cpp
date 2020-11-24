@@ -59,6 +59,8 @@
 #include <QtSerialPort/QSerialPort>
 #include <QVBoxLayout>
 #include <QSlider>
+#include <QScrollBar>
+#include <QDial>
 #include <QDebug>
 
 //! [0]
@@ -80,7 +82,17 @@ MainWindow::MainWindow(QWidget *parent) :
     // slider->setRange(0, 255);
     ui->centralWidget->layout()->addWidget(slider);
 
-    connect(slider, SIGNAL(valueChanged(int)), this, SLOT(on_valueChanged(int)));
+    scroll = new QScrollBar(this);
+    scroll->setOrientation(Qt::Horizontal);
+    ui->centralWidget->layout()->addWidget(scroll);
+
+    dial = new QDial(this);
+    dial->setOrientation(Qt::Horizontal);
+    ui->centralWidget->layout()->addWidget(dial);
+
+    connect(slider, SIGNAL(valueChanged(int)), this, SLOT(on_slider_valueChanged(int)));
+    connect(scroll, SIGNAL(valueChanged(int)), this, SLOT(on_scroll_valueChanged(int)));
+    connect(dial, SIGNAL(valueChanged(int)), this, SLOT(on_dial_valueChanged(int)));
 
 //! [1]
     serial = new QSerialPort(this);
@@ -127,6 +139,24 @@ void MainWindow::on_valueChanged(int value)
     qDebug() << temp;
     // sliderValue = temp;
     writeData(temp.toUtf8());
+}
+
+void MainWindow::on_slider_valueChanged(int value)
+{
+    on_valueChanged(value);
+}
+
+
+void MainWindow::on_scroll_valueChanged(int value)
+{
+    on_valueChanged(value);
+}
+
+// scroll->setValue(value);
+// slider->setValue(value);
+void MainWindow::on_dial_valueChanged(int value)
+{
+    on_valueChanged(value);
 }
 
 MainWindow::~MainWindow()
