@@ -52,13 +52,19 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   /* USER CODE BEGIN Callback 1 */
   
   if (htim == &htim16)
+  
   {
+  
 	if (++tim16_counter >= tim16_edge[tim16_step])
+	
 	{
+	
 	  tim16_counter  = 0;
+	  
       // temp = tim16_output[tim16_step +1];
 
 	  tim16_step ++;
+	  
 	  if (tim16_step >= 18)
 	  {
 		  tim16_step = 0;
@@ -71,5 +77,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	  }
 	}
   }
+  
   /* USER CODE END Callback 1 */
+  
 }
