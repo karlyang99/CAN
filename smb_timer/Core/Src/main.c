@@ -341,8 +341,38 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   static int tim16_counter  = 0;
   static int tim16_edge[18] =   {   80,   80,  100,  160,  160,  160,  100,   80,   80,
 		  	  	  	  	  	  	    80,   80,  100,  160,  160,  160,  100,   80,   80 };
-  static int tim16_output[18] = { 0x08, 0x0C, 0x0E, 0x0F, 0x0E, 0x0C, 0x08, 0x00, 0x00,
-  	  	  	  	  	  	  	      0x80, 0xC0, 0xE0, 0xF0, 0xE0, 0xC0, 0x80, 0x00, 0x00 };
+#define PWM11  GPIO_PIN_0
+#define PWM21  GPIO_PIN_1
+#define PWM31  GPIO_PIN_10
+#define PWM41  GPIO_PIN_11
+#define PWM12  GPIO_PIN_9
+#define PWM22  GPIO_PIN_5
+#define PWM32  GPIO_PIN_6
+#define PWM42  GPIO_PIN_8
+
+#define PWM_POSITIVE  (PWM11|PWM21|PWM31|PWM41)
+#define PWM_NEGATIVE  (PWM12|PWM22|PWM32|PWM42)
+
+  static int tim16_output[18][2] = {
+		  { PWM11,  PWM21|PWM31|PWM41|PWM_NEGATIVE},
+		  { PWM11|PWM21,  PWM31|PWM41|PWM_NEGATIVE},
+		  { PWM11|PWM21|PWM31,  PWM41|PWM_NEGATIVE},
+		  { PWM11|PWM21|PWM31|PWM41,  PWM_NEGATIVE},
+		  { PWM11|PWM21|PWM31,  PWM41|PWM_NEGATIVE},
+		  { PWM11|PWM21,  PWM31|PWM41|PWM_NEGATIVE},
+		  { PWM11,  PWM21|PWM31|PWM41|PWM_NEGATIVE},
+		  { 0, PWM_POSITIVE|PWM_NEGATIVE},
+		  { 0, PWM_POSITIVE|PWM_NEGATIVE},
+		  { PWM12,  PWM22|PWM32|PWM42|PWM_POSITIVE},
+		  { PWM12|PWM22,  PWM32|PWM42|PWM_POSITIVE},
+		  { PWM12|PWM22|PWM32,  PWM42|PWM_POSITIVE},
+		  { PWM12|PWM22|PWM32|PWM42,  PWM_POSITIVE},
+		  { PWM12|PWM22|PWM32,  PWM42|PWM_POSITIVE},
+		  { PWM12|PWM22,  PWM32|PWM42|PWM_POSITIVE},
+		  { PWM12,  PWM22|PWM32|PWM42|PWM_POSITIVE},
+		  { 0,PWM_POSITIVE|PWM_NEGATIVE},
+		  { 0,PWM_POSITIVE|PWM_NEGATIVE}
+  };
 
   /* USER CODE END Callback 0 */
   if (htim->Instance == TIM6) {
@@ -355,33 +385,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	if (tim16_counter >= tim16_edge[tim16_step])
 	{
 	  tim16_counter  = 0;
-      // temp = tim16_output[tim16_step +1];
-	  // HAL_GPIO_WritePin(GPIOC, GPIO_PIN_1, GPIO_PIN_SET);
-	  // HAL_GPIO_WritePin(GPIOD, GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15, GPIO_PIN_RESET);
 
-	  if (tim16_output[tim16_step] & 0x08) HAL_GPIO_WritePin(GPIOC,GPIO_PIN_0,GPIO_PIN_SET);
-	  else HAL_GPIO_WritePin(GPIOC,GPIO_PIN_0,GPIO_PIN_RESET);
+	  if (tim16_output[tim16_step][0]) HAL_GPIO_WritePin(GPIOC,tim16_output[tim16_step][0],GPIO_PIN_SET);
+	  HAL_GPIO_WritePin(GPIOC,tim16_output[tim16_step][1],GPIO_PIN_RESET);
 
-	  if (tim16_output[tim16_step] & 0x04) HAL_GPIO_WritePin(GPIOC,GPIO_PIN_1,GPIO_PIN_SET);
-	  else HAL_GPIO_WritePin(GPIOC,GPIO_PIN_1,GPIO_PIN_RESET);
-
-	  if (tim16_output[tim16_step] & 0x02) HAL_GPIO_WritePin(GPIOC,GPIO_PIN_10,GPIO_PIN_SET);
-	  else HAL_GPIO_WritePin(GPIOC,GPIO_PIN_10,GPIO_PIN_RESET);
-
-	  if (tim16_output[tim16_step] & 0x01) HAL_GPIO_WritePin(GPIOC,GPIO_PIN_11,GPIO_PIN_SET);
-	  else HAL_GPIO_WritePin(GPIOC,GPIO_PIN_11,GPIO_PIN_RESET);
-
-	  if (tim16_output[tim16_step] & 0x80) HAL_GPIO_WritePin(GPIOC,GPIO_PIN_9,GPIO_PIN_SET);
-	  else HAL_GPIO_WritePin(GPIOC,GPIO_PIN_9,GPIO_PIN_RESET);
-
-	  if (tim16_output[tim16_step] & 0x40) HAL_GPIO_WritePin(GPIOC,GPIO_PIN_5,GPIO_PIN_SET);
-	  else HAL_GPIO_WritePin(GPIOC,GPIO_PIN_5,GPIO_PIN_RESET);
-
-	  if (tim16_output[tim16_step] & 0x20) HAL_GPIO_WritePin(GPIOC,GPIO_PIN_6,GPIO_PIN_SET);
-	  else HAL_GPIO_WritePin(GPIOC,GPIO_PIN_6,GPIO_PIN_RESET);
-
-	  if (tim16_output[tim16_step] & 0x10) HAL_GPIO_WritePin(GPIOC,GPIO_PIN_8,GPIO_PIN_SET);
-	  else HAL_GPIO_WritePin(GPIOC,GPIO_PIN_8,GPIO_PIN_RESET);
 
 	  tim16_step ++;
 	  if (tim16_step >= 18)
