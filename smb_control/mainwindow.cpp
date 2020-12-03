@@ -62,6 +62,9 @@
 #include <QScrollBar>
 #include <QDial>
 #include <QDebug>
+#include <QGroupBox>
+#include <QSpinBox>
+#include <QWidget>
 
 //! [0]
 MainWindow::MainWindow(QWidget *parent) :
@@ -76,6 +79,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // ui->centralWidget->setLayout(new QVBoxLayout);
     ui->centralWidget->layout()->addWidget(console);
 
+    /*
     slider = new QSlider(this);
     // slider->resize(255, 20);
     slider->setOrientation(Qt::Horizontal);
@@ -90,9 +94,15 @@ MainWindow::MainWindow(QWidget *parent) :
     dial->setOrientation(Qt::Horizontal);
     ui->centralWidget->layout()->addWidget(dial);
 
-    connect(slider, SIGNAL(valueChanged(int)), this, SLOT(on_slider_valueChanged(int)));
-    connect(scroll, SIGNAL(valueChanged(int)), this, SLOT(on_scroll_valueChanged(int)));
-    connect(dial, SIGNAL(valueChanged(int)), this, SLOT(on_dial_valueChanged(int)));
+    connect(slider, SIGNAL(valueChanged(int)), this, SLOT(onSliderValueChanged(int)));
+    connect(scroll, SIGNAL(valueChanged(int)), this, SLOT(onScrollValueChanged(int)));
+    connect(dial, SIGNAL(valueChanged(int)), this, SLOT(onDialValueChanged(int)));
+*/
+    createScrollBars(tr("Controls"));
+    ui->centralWidget->layout()->addWidget(scrollBarsGroup);
+
+    createSettings(tr("Ranges"));
+    ui->centralWidget->layout()->addWidget(settingsGroup);
 
 //! [1]
     serial = new QSerialPort(this);
@@ -120,6 +130,148 @@ MainWindow::MainWindow(QWidget *parent) :
 }
 //! [3]
 
+void MainWindow::createScrollBars(const QString &title)
+{
+    scrollBarsGroup = new QGroupBox(title);
+    frequencyLabel  = new QLabel(tr("Frequency(Hz)"));
+    voltageLabel    = new QLabel(tr("Voltage(V)"));
+    phaseLabel      = new QLabel(tr("Phase(Degree)"));
+
+    frequencySpin = new QSpinBox;
+    frequencySpin->setRange(-100, 100);
+    frequencySpin->setSingleStep(1);
+
+    voltageSpin = new QSpinBox;
+    voltageSpin->setRange(-100, 100);
+    voltageSpin->setSingleStep(1);
+
+    phaseSpin = new QSpinBox;
+    phaseSpin->setRange(-100, 100);
+    phaseSpin->setSingleStep(1);
+
+    frequency = new QScrollBar(this);
+    frequency->setOrientation(Qt::Horizontal);
+    voltage = new QScrollBar(this);
+    voltage->setOrientation(Qt::Horizontal);
+    phase = new QScrollBar(this);
+    phase->setOrientation(Qt::Horizontal);
+
+    frequency->setValue(50);
+    voltage->setValue(110);
+    phase->setValue(0);
+
+    connect(frequency, SIGNAL(valueChanged(int)), this, SLOT(onFrequencyValueChanged(int)));
+    connect(voltage, SIGNAL(valueChanged(int)), this, SLOT(onVoltageValueChanged(int)));
+    connect(phase, SIGNAL(valueChanged(int)), this, SLOT(onPhaseValueChanged(int)));
+
+    QGridLayout *scrollBarsLayout = new QGridLayout;
+    scrollBarsLayout->addWidget(frequencyLabel, 0, 0);
+    scrollBarsLayout->addWidget(voltageLabel, 1, 0);
+    scrollBarsLayout->addWidget(phaseLabel, 2, 0);
+    scrollBarsLayout->addWidget(frequencySpin, 0, 1);
+    scrollBarsLayout->addWidget(voltageSpin, 1, 1);
+    scrollBarsLayout->addWidget(phaseSpin, 2, 1);
+    scrollBarsLayout->addWidget(frequency, 0, 2);
+    scrollBarsLayout->addWidget(voltage, 1, 2);
+    scrollBarsLayout->addWidget(phase, 2, 2);
+
+    scrollBarsGroup->setLayout(scrollBarsLayout);
+}
+
+
+void MainWindow::createSettings(const QString &title)
+{
+    settingsGroup = new QGroupBox(title);
+    minFrequencyLabel = new QLabel(tr("Frequency Min"));
+    maxFrequencyLabel = new QLabel(tr("Max"));
+    minFrequencyBox = new QSpinBox;
+    minFrequencyBox->setRange(10, 50);
+    minFrequencyBox->setSingleStep(1);
+    maxFrequencyBox = new QSpinBox;
+    maxFrequencyBox->setRange(40, 90);
+    maxFrequencyBox->setSingleStep(1);
+
+    minVoltageLabel = new QLabel(tr("Voltage Min"));
+    maxVoltageLabel = new QLabel(tr("Max"));
+    minVoltageBox = new QSpinBox;
+    minVoltageBox->setRange(20, 100);
+    minVoltageBox->setSingleStep(1);
+    maxVoltageBox = new QSpinBox;
+    maxVoltageBox->setRange(60, 240);
+    maxVoltageBox->setSingleStep(1);
+
+    minPhaseLabel = new QLabel(tr("Phase Min"));
+    maxPhaseLabel = new QLabel(tr("Max"));
+    minPhaseBox = new QSpinBox;
+    minPhaseBox->setRange(-90, 0);
+    minPhaseBox->setSingleStep(1);
+    maxPhaseBox = new QSpinBox;
+    maxPhaseBox->setRange(0, 90);
+    maxPhaseBox->setSingleStep(1);
+
+    minFrequencyBox->setValue(40);
+    maxFrequencyBox->setValue(70);
+    minVoltageBox->setValue(70);
+    maxVoltageBox->setValue(110);
+    minPhaseBox->setValue(-45);
+    maxPhaseBox->setValue(45);
+
+    connect(minFrequencyBox, SIGNAL(valueChanged(int)), this, SLOT(setFrequencyMinimum(int)));
+    connect(maxFrequencyBox, SIGNAL(valueChanged(int)), this, SLOT(setFrequencyMaximum(int)));
+    connect(minVoltageBox,   SIGNAL(valueChanged(int)), this, SLOT(setVoltageMinimum(int)));
+    connect(maxVoltageBox,   SIGNAL(valueChanged(int)), this, SLOT(setVoltageMaximum(int)));
+    connect(minPhaseBox,     SIGNAL(valueChanged(int)), this, SLOT(setPhaseMinimum(int)));
+    connect(maxPhaseBox,     SIGNAL(valueChanged(int)), this, SLOT(setPhaseMaximum(int)));
+
+    QGridLayout *controlsLayout = new QGridLayout;
+    controlsLayout->addWidget(minFrequencyLabel, 0, 0);
+    controlsLayout->addWidget(maxFrequencyLabel, 0, 2);
+    controlsLayout->addWidget(minFrequencyBox,   0, 1);
+    controlsLayout->addWidget(maxFrequencyBox,   0, 3);
+
+    controlsLayout->addWidget(minVoltageLabel, 1, 0);
+    controlsLayout->addWidget(maxVoltageLabel, 1, 2);
+    controlsLayout->addWidget(minVoltageBox,   1, 1);
+    controlsLayout->addWidget(maxVoltageBox,   1, 3);
+
+    controlsLayout->addWidget(minPhaseLabel, 2, 0);
+    controlsLayout->addWidget(maxPhaseLabel, 2, 2);
+    controlsLayout->addWidget(minPhaseBox,   2, 1);
+    controlsLayout->addWidget(maxPhaseBox,   2, 3);
+    settingsGroup->setLayout(controlsLayout);
+}
+
+void MainWindow::setFrequencyMinimum(int value)
+{
+    frequency->setMinimum(value);
+}
+
+void MainWindow::setFrequencyMaximum(int value)
+{
+    frequency->setMaximum(value);
+}
+
+void MainWindow::setVoltageMinimum(int value)
+{
+    voltage->setMinimum(value);
+}
+
+void MainWindow::setVoltageMaximum(int value)
+{
+    voltage->setMaximum(value);
+
+}
+
+void MainWindow::setPhaseMinimum(int value)
+{
+     phase->setMinimum(value);
+}
+
+void MainWindow::setPhaseMaximum(int value)
+{
+    phase->setMaximum(value);
+}
+
 void MainWindow::on_valueChanged(int value)
 {
     qDebug() << value;
@@ -141,20 +293,20 @@ void MainWindow::on_valueChanged(int value)
     writeData(temp.toUtf8());
 }
 
-void MainWindow::on_slider_valueChanged(int value)
+void MainWindow::onFrequencyValueChanged(int value)
 {
     on_valueChanged(value);
 }
 
 
-void MainWindow::on_scroll_valueChanged(int value)
+void MainWindow::onVoltageValueChanged(int value)
 {
     on_valueChanged(value);
 }
 
 // scroll->setValue(value);
 // slider->setValue(value);
-void MainWindow::on_dial_valueChanged(int value)
+void MainWindow::onPhaseValueChanged(int value)
 {
     on_valueChanged(value);
 }

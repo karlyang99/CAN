@@ -70,6 +70,12 @@ namespace Ui {
 class MainWindow;
 }
 
+class QCheckBox;
+class QComboBox;
+class QGroupBox;
+class QLabel;
+class QSpinBox;
+
 QT_END_NAMESPACE
 
 class Console;
@@ -88,10 +94,15 @@ private slots:
     void about();
     void writeData(const QByteArray &data);
     void readData();
-
-    void on_slider_valueChanged(int value);
-    void on_scroll_valueChanged(int value);
-    void on_dial_valueChanged(int value);
+    void onFrequencyValueChanged(int value);
+    void onVoltageValueChanged(int value);
+    void onPhaseValueChanged(int value);
+    void setFrequencyMinimum(int value);
+    void setFrequencyMaximum(int value);
+    void setVoltageMinimum(int value);
+    void setVoltageMaximum(int value);
+    void setPhaseMinimum(int value);
+    void setPhaseMaximum(int value);
 
     void handleError(QSerialPort::SerialPortError error);
 
@@ -101,13 +112,38 @@ private:
 
 private:
     void showStatusMessage(const QString &message);
+    void createScrollBars(const QString &title);
+    void createSettings(const QString &title);
 
     Ui::MainWindow *ui;
     QLabel *status;
     Console *console;
-    QSlider *slider;
-    QScrollBar *scroll;
-    QDial *dial;
+
+    QGroupBox *scrollBarsGroup;
+    QLabel *frequencyLabel;
+    QLabel *voltageLabel;
+    QLabel *phaseLabel;
+    QSpinBox *frequencySpin;
+    QSpinBox *voltageSpin;
+    QSpinBox *phaseSpin;
+    QScrollBar *frequency;
+    QScrollBar *voltage;
+    QScrollBar *phase;
+
+    QGroupBox *settingsGroup;
+    QLabel *minFrequencyLabel;
+    QLabel *maxFrequencyLabel;
+    QSpinBox *minFrequencyBox;
+    QSpinBox *maxFrequencyBox;
+    QLabel *minVoltageLabel;
+    QLabel *maxVoltageLabel;
+    QSpinBox *minVoltageBox;
+    QSpinBox *maxVoltageBox;
+    QLabel *minPhaseLabel;
+    QLabel *maxPhaseLabel;
+    QSpinBox *minPhaseBox;
+    QSpinBox *maxPhaseBox;
+
     SettingsDialog *settings;
     QSerialPort *serial;
 };
