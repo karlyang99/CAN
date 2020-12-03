@@ -62,6 +62,23 @@
 #include <QScrollBar>
 #include <QDial>
 
+#define SMB_WIDTH1   50
+#define SMB_WIDTH2   300
+#define SMB_WIDTH3   70
+
+
+#define SMB_F_MIN    40
+#define SMB_F_VAL    50
+#define SMB_F_MAX    70
+
+#define SMB_V_MIN    90
+#define SMB_V_VAL    110
+#define SMB_V_MAX    120
+
+#define SMB_P_MIN    (-45)
+#define SMB_P_VAL    0
+#define SMB_P_MAX    45
+
 QT_BEGIN_NAMESPACE
 
 class QLabel;
@@ -97,6 +114,9 @@ private slots:
     void onFrequencyValueChanged(int value);
     void onVoltageValueChanged(int value);
     void onPhaseValueChanged(int value);
+    void onFrequencySpinChanged(int value);
+    void onVoltageSpinChanged(int value);
+    void onPhaseSpinChanged(int value);
     void setFrequencyMinimum(int value);
     void setFrequencyMaximum(int value);
     void setVoltageMinimum(int value);

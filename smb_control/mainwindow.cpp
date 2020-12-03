@@ -79,30 +79,13 @@ MainWindow::MainWindow(QWidget *parent) :
     // ui->centralWidget->setLayout(new QVBoxLayout);
     ui->centralWidget->layout()->addWidget(console);
 
-    /*
-    slider = new QSlider(this);
-    // slider->resize(255, 20);
-    slider->setOrientation(Qt::Horizontal);
-    // slider->setRange(0, 255);
-    ui->centralWidget->layout()->addWidget(slider);
-
-    scroll = new QScrollBar(this);
-    scroll->setOrientation(Qt::Horizontal);
-    ui->centralWidget->layout()->addWidget(scroll);
-
-    dial = new QDial(this);
-    dial->setOrientation(Qt::Horizontal);
-    ui->centralWidget->layout()->addWidget(dial);
-
-    connect(slider, SIGNAL(valueChanged(int)), this, SLOT(onSliderValueChanged(int)));
-    connect(scroll, SIGNAL(valueChanged(int)), this, SLOT(onScrollValueChanged(int)));
-    connect(dial, SIGNAL(valueChanged(int)), this, SLOT(onDialValueChanged(int)));
-*/
     createScrollBars(tr("Parameter Controls"));
     ui->centralWidget->layout()->addWidget(scrollBarsGroup);
+    scrollBarsGroup->setEnabled(false);
 
     createSettings(tr("Range Settings"));
     ui->centralWidget->layout()->addWidget(settingsGroup);
+    settingsGroup->setEnabled(false);
 
 //! [1]
     serial = new QSerialPort(this);
@@ -138,39 +121,50 @@ void MainWindow::createScrollBars(const QString &title)
     phaseLabel      = new QLabel(tr("Phase(Degree)"));
 
     frequencySpin = new QSpinBox;
-    frequencySpin->setRange(-100, 100);
+    frequencySpin->setRange(SMB_F_MIN, SMB_F_MAX);
     frequencySpin->setSingleStep(1);
-    frequencySpin->setFixedWidth(50);
+    frequencySpin->setFixedWidth(SMB_WIDTH1);
 
     voltageSpin = new QSpinBox;
-    voltageSpin->setRange(-100, 100);
+    voltageSpin->setRange(SMB_V_MIN, SMB_V_MAX);
     voltageSpin->setSingleStep(1);
-    voltageSpin->setFixedWidth(50);
+    voltageSpin->setFixedWidth(SMB_WIDTH1);
 
     phaseSpin = new QSpinBox;
-    phaseSpin->setRange(-100, 100);
+    phaseSpin->setRange(SMB_P_MIN, SMB_P_MAX);
     phaseSpin->setSingleStep(1);
-    phaseSpin->setFixedWidth(50);
+    phaseSpin->setFixedWidth(SMB_WIDTH1);
+
+    frequencySpin->setValue(SMB_F_VAL);
+    voltageSpin->setValue(SMB_V_VAL);
+    phaseSpin->setValue(SMB_P_VAL);
 
     frequency = new QScrollBar(this);
     frequency->setOrientation(Qt::Horizontal);
-    frequency->setFixedWidth(280);
+    frequency->setRange(SMB_F_MIN, SMB_F_MAX);
+    frequency->setFixedWidth(SMB_WIDTH2);
 
     voltage = new QScrollBar(this);
     voltage->setOrientation(Qt::Horizontal);
-    voltage->setFixedWidth(280);
+    voltage->setRange(SMB_V_MIN, SMB_V_MAX);
+    voltage->setFixedWidth(SMB_WIDTH2);
 
     phase = new QScrollBar(this);
     phase->setOrientation(Qt::Horizontal);
-    phase->setFixedWidth(280);
+    phase->setRange(SMB_P_MIN, SMB_P_MAX);
+    phase->setFixedWidth(SMB_WIDTH2);
 
-    frequency->setValue(50);
-    voltage->setValue(110);
-    phase->setValue(0);
+    frequency->setValue(SMB_F_VAL);
+    voltage->setValue(SMB_V_VAL);
+    phase->setValue(SMB_P_VAL);
 
     connect(frequency, SIGNAL(valueChanged(int)), this, SLOT(onFrequencyValueChanged(int)));
     connect(voltage, SIGNAL(valueChanged(int)), this, SLOT(onVoltageValueChanged(int)));
     connect(phase, SIGNAL(valueChanged(int)), this, SLOT(onPhaseValueChanged(int)));
+
+    connect(frequencySpin, SIGNAL(valueChanged(int)), this, SLOT(onFrequencySpinChanged(int)));
+    connect(voltageSpin, SIGNAL(valueChanged(int)), this, SLOT(onVoltageSpinChanged(int)));
+    connect(phaseSpin, SIGNAL(valueChanged(int)), this, SLOT(onPhaseSpinChanged(int)));
 
     QGridLayout *scrollBarsLayout = new QGridLayout;
     scrollBarsLayout->addWidget(frequencyLabel, 0, 0);
@@ -186,52 +180,50 @@ void MainWindow::createScrollBars(const QString &title)
     scrollBarsGroup->setLayout(scrollBarsLayout);
 }
 
-#define SMB_WIDTH   70
-
 void MainWindow::createSettings(const QString &title)
 {
     settingsGroup = new QGroupBox(title);
     minFrequencyLabel = new QLabel(tr("Frequency Min"));
-    minFrequencyLabel->setFixedWidth(SMB_WIDTH);
+    minFrequencyLabel->setFixedWidth(SMB_WIDTH3);
     maxFrequencyLabel = new QLabel(tr("Max"));
-    maxFrequencyLabel->setFixedWidth(SMB_WIDTH/2);
+    maxFrequencyLabel->setFixedWidth(SMB_WIDTH3/2);
     minFrequencyBox = new QSpinBox;
-    minFrequencyBox->setRange(10, 50);
+    minFrequencyBox->setRange(SMB_F_MIN-20, SMB_F_MIN+20);
     minFrequencyBox->setSingleStep(1);
-    minFrequencyBox->setFixedWidth(SMB_WIDTH);
+    minFrequencyBox->setFixedWidth(SMB_WIDTH3);
     maxFrequencyBox = new QSpinBox;
-    maxFrequencyBox->setRange(40, 90);
+    maxFrequencyBox->setRange(SMB_F_MAX-20, SMB_F_MAX+20);
     maxFrequencyBox->setSingleStep(1);
-    maxFrequencyBox->setFixedWidth(SMB_WIDTH);
+    maxFrequencyBox->setFixedWidth(SMB_WIDTH3);
 
     minVoltageLabel = new QLabel(tr("Voltage Min"));
     maxVoltageLabel = new QLabel(tr("Max"));
     minVoltageBox = new QSpinBox;
-    minVoltageBox->setRange(20, 100);
+    minVoltageBox->setRange(SMB_V_MIN-10, SMB_V_MIN+10);
     minVoltageBox->setSingleStep(1);
-    minVoltageBox->setFixedWidth(SMB_WIDTH);
+    minVoltageBox->setFixedWidth(SMB_WIDTH3);
     maxVoltageBox = new QSpinBox;
-    maxVoltageBox->setRange(60, 240);
+    maxVoltageBox->setRange(SMB_V_MAX-10, SMB_V_MAX+10);
     maxVoltageBox->setSingleStep(1);
-    maxVoltageBox->setFixedWidth(SMB_WIDTH);
+    maxVoltageBox->setFixedWidth(SMB_WIDTH3);
 
     minPhaseLabel = new QLabel(tr("Phase Min"));
     maxPhaseLabel = new QLabel(tr("Max"));
     minPhaseBox = new QSpinBox;
-    minPhaseBox->setRange(-90, 0);
+    minPhaseBox->setRange(SMB_P_MIN-45, 0);
     minPhaseBox->setSingleStep(1);
-    minPhaseBox->setFixedWidth(SMB_WIDTH);
+    minPhaseBox->setFixedWidth(SMB_WIDTH3);
     maxPhaseBox = new QSpinBox;
-    maxPhaseBox->setRange(0, 90);
+    maxPhaseBox->setRange(0, SMB_P_MAX+45);
     maxPhaseBox->setSingleStep(1);
-    maxPhaseBox->setFixedWidth(SMB_WIDTH);
+    maxPhaseBox->setFixedWidth(SMB_WIDTH3);
 
-    minFrequencyBox->setValue(40);
-    maxFrequencyBox->setValue(70);
-    minVoltageBox->setValue(70);
-    maxVoltageBox->setValue(110);
-    minPhaseBox->setValue(-45);
-    maxPhaseBox->setValue(45);
+    minFrequencyBox->setValue(SMB_F_MIN);
+    maxFrequencyBox->setValue(SMB_F_MAX);
+    minVoltageBox->setValue(SMB_V_MIN);
+    maxVoltageBox->setValue(SMB_V_MAX);
+    minPhaseBox->setValue(SMB_P_MIN);
+    maxPhaseBox->setValue(SMB_P_MAX);
 
     connect(minFrequencyBox, SIGNAL(valueChanged(int)), this, SLOT(setFrequencyMinimum(int)));
     connect(maxFrequencyBox, SIGNAL(valueChanged(int)), this, SLOT(setFrequencyMaximum(int)));
@@ -314,20 +306,37 @@ void MainWindow::on_valueChanged(int value)
 
 void MainWindow::onFrequencyValueChanged(int value)
 {
+    frequencySpin->setValue(value);
     on_valueChanged(value);
 }
 
 
 void MainWindow::onVoltageValueChanged(int value)
 {
+    voltageSpin->setValue(value);
     on_valueChanged(value);
 }
 
-// scroll->setValue(value);
-// slider->setValue(value);
 void MainWindow::onPhaseValueChanged(int value)
 {
+    phaseSpin->setValue(value);
     on_valueChanged(value);
+}
+
+void MainWindow::onFrequencySpinChanged(int value)
+{
+    frequency->setValue(value);
+}
+
+
+void MainWindow::onVoltageSpinChanged(int value)
+{
+    voltage->setValue(value);
+}
+
+void MainWindow::onPhaseSpinChanged(int value)
+{
+    phase->setValue(value);
 }
 
 MainWindow::~MainWindow()
@@ -352,6 +361,8 @@ void MainWindow::openSerialPort()
         ui->actionConnect->setEnabled(false);
         ui->actionDisconnect->setEnabled(true);
         ui->actionConfigure->setEnabled(false);
+        scrollBarsGroup->setEnabled(true);
+        settingsGroup->setEnabled(true);
         showStatusMessage(tr("Connected to %1 : %2, %3, %4, %5, %6")
                           .arg(p.name).arg(p.stringBaudRate).arg(p.stringDataBits)
                           .arg(p.stringParity).arg(p.stringStopBits).arg(p.stringFlowControl));
@@ -372,6 +383,8 @@ void MainWindow::closeSerialPort()
     ui->actionConnect->setEnabled(true);
     ui->actionDisconnect->setEnabled(false);
     ui->actionConfigure->setEnabled(true);
+    scrollBarsGroup->setEnabled(false);
+    settingsGroup->setEnabled(false);
     showStatusMessage(tr("Disconnected"));
 }
 //! [5]
