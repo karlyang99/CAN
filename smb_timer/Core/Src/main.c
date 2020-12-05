@@ -20,6 +20,9 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "cmsis_os.h"
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -52,6 +55,20 @@ const osThreadAttr_t defaultTask_attributes = {
   .priority = (osPriority_t) osPriorityNormal,
   .stack_size = 128 * 4
 };
+/* Definitions for uartTask */
+osThreadId_t uartTaskHandle;
+const osThreadAttr_t uartTask_attributes = {
+  .name = "uartTask",
+  .priority = (osPriority_t) osPriorityLow,
+  .stack_size = 128 * 4
+};
+/* Definitions for myBaseTask */
+osThreadId_t myBaseTaskHandle;
+const osThreadAttr_t myBaseTask_attributes = {
+  .name = "myBaseTask",
+  .priority = (osPriority_t) osPriorityLow,
+  .stack_size = 128 * 4
+};
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -62,6 +79,8 @@ static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_TIM16_Init(void);
 void StartDefaultTask(void *argument);
+void StartUartTask(void *argument);
+void StartBaseTask(void *argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -130,6 +149,12 @@ int main(void)
   /* Create the thread(s) */
   /* creation of defaultTask */
   defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
+
+  /* creation of uartTask */
+  uartTaskHandle = osThreadNew(StartUartTask, NULL, &uartTask_attributes);
+
+  /* creation of myBaseTask */
+  myBaseTaskHandle = osThreadNew(StartBaseTask, NULL, &myBaseTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -303,7 +328,14 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+static int led = 1000;
+static int frequency = 50;
+static int hz = 1;
+static int voltage = 110;
+static int phase = 0;
+static unsigned short pin_state = 0;
+static char temp[100];
+static char test[5];
 
 /* USER CODE END 4 */
 
@@ -323,6 +355,77 @@ void StartDefaultTask(void *argument)
     osDelay(1);
   }
   /* USER CODE END 5 */
+}
+
+/* USER CODE BEGIN Header_StartUartTask */
+/**
+* @brief Function implementing the uartTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartUartTask */
+void StartUartTask(void *argument)
+{
+  /* USER CODE BEGIN StartUartTask */
+  /* Infinite loop */
+  int in;
+
+  for(;;)
+  {
+	    HAL_UART_Receive(&huart2, (uint8_t *)test, 5, HAL_MAX_DELAY);
+		sprintf(temp, "%c%c%c%c%c!\r\n", test[0],test[1],test[2],test[3],test[4]);
+		HAL_UART_Transmit(&huart2, (uint8_t *)temp, strlen(temp), HAL_MAX_DELAY);
+		in=atoi(&test[1]);
+
+	    switch(test[0]) {
+		case 'F':
+			frequency = in;
+			led = 5000.0/(in-40);
+			hz = frequency%4 +1;
+			sprintf(temp, "F:%d, HZ: %d, LED:%d mS\r\n", frequency, hz, led);
+			break;
+		case 'V':
+			voltage = in;
+			sprintf(temp, "V:%d\r\n", voltage);
+			break;
+		case 'P':
+			phase = in;
+			sprintf(temp, "P:%d\r\n", phase);
+			break;
+		case 'M':
+			phase = -in;
+			sprintf(temp, "M:%d\r\n", phase);
+			break;
+		default:
+			sprintf(temp, "D:wrong!\r\n");
+			break;
+		}
+		HAL_UART_Transmit(&huart2, (uint8_t *)temp, strlen(temp), HAL_MAX_DELAY);
+  }
+  /* USER CODE END StartUartTask */
+}
+
+/* USER CODE BEGIN Header_StartBaseTask */
+/**
+* @brief Function implementing the myBaseTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartBaseTask */
+void StartBaseTask(void *argument)
+{
+  /* USER CODE BEGIN StartBaseTask */
+  /* Infinite loop */
+  for(;;)
+  {
+	  pin_state = !pin_state;
+	  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, pin_state);
+	  osDelay(led);
+	  pin_state = !pin_state;
+	  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, pin_state);
+	  osDelay(led);
+  }
+  /* USER CODE END StartBaseTask */
 }
 
 /**
@@ -382,24 +485,22 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   if (htim == &htim16)
   {
 	tim16_counter++;
-	if (tim16_counter >= tim16_edge[tim16_step])
+	if (tim16_counter >= (tim16_edge[tim16_step]/hz))
 	{
 	  tim16_counter  = 0;
 
 	  if (tim16_output[tim16_step][0]) HAL_GPIO_WritePin(GPIOC,tim16_output[tim16_step][0],GPIO_PIN_SET);
 	  HAL_GPIO_WritePin(GPIOC,tim16_output[tim16_step][1],GPIO_PIN_RESET);
 
-
 	  tim16_step ++;
 	  if (tim16_step >= 18)
 	  {
 		  tim16_step = 0;
-
 		  tim16_led ++;
 	      if (tim16_led > 50)
 	      {
 	    	  tim16_led = 0;
-		      HAL_GPIO_TogglePin(GPIOA,GPIO_PIN_5);
+		      // HAL_GPIO_TogglePin(GPIOA,GPIO_PIN_5);
 	      }
 	  }
 	}
