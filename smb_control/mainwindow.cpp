@@ -285,7 +285,8 @@ void MainWindow::setPhaseMaximum(int value)
     phase->setMaximum(value);
 }
 
-void MainWindow::on_valueChanged(int value)
+/*
+void MainWindow::on_FrequencyValueChanged(int value)
 {
     qDebug() << value;
     // ui->progressBar->setValue(value);
@@ -300,36 +301,91 @@ void MainWindow::on_valueChanged(int value)
     while (temp.length()<4){
         temp = "0" + temp;
     }
+
+    temp = "F" + temp;
+
     //QString temp = QString::number(value*20,10);
     qDebug() << temp;
     // sliderValue = temp;
+    writeData(temp.toUtf8());
+}
+*/
+
+void MainWindow::on_FrequencyValueChanged(int value)
+{
+    qDebug() << value;
+
+    QString temp = QString::number(value,10);
+    while (temp.length()<4){
+        temp = "0" + temp;
+    }
+    temp = "F" + temp;
+
+    qDebug() << temp;
+    writeData(temp.toUtf8());
+}
+
+
+void MainWindow::on_VoltageValueChanged(int value)
+{
+    qDebug() << value;
+
+    QString temp = QString::number(value,10);
+    while (temp.length()<4){
+        temp = "0" + temp;
+    }
+    temp = "V" + temp;
+
+    qDebug() << temp;
+    writeData(temp.toUtf8());
+}
+
+void MainWindow::on_PhaseValueChanged(int value)
+{
+    qDebug() << value;
+    QString temp;
+
+    if (value >=0) {
+        temp = QString::number(value,10);
+        while (temp.length()<4){
+            temp = "0" + temp;
+        }
+        temp = "P" + temp;
+    }
+    else {
+        temp = QString::number(-value,10);
+        while (temp.length()<4){
+            temp = "0" + temp;
+        }
+        temp = "M" + temp;
+    }
+
+    qDebug() << temp;
     writeData(temp.toUtf8());
 }
 
 void MainWindow::onFrequencyValueChanged(int value)
 {
     frequencySpin->setValue(value);
-    on_valueChanged(value);
+    on_FrequencyValueChanged(value);
 }
-
 
 void MainWindow::onVoltageValueChanged(int value)
 {
     voltageSpin->setValue(value);
-    on_valueChanged(value);
+    on_VoltageValueChanged(value);
 }
 
 void MainWindow::onPhaseValueChanged(int value)
 {
     phaseSpin->setValue(value);
-    on_valueChanged(value);
+    on_PhaseValueChanged(value);
 }
 
 void MainWindow::onFrequencySpinChanged(int value)
 {
     frequency->setValue(value);
 }
-
 
 void MainWindow::onVoltageSpinChanged(int value)
 {

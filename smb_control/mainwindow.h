@@ -129,7 +129,9 @@ private slots:
 
 private:
     void initActionsConnections();
-    void on_valueChanged(int value);
+    void on_FrequencyValueChanged(int value);
+    void on_VoltageValueChanged(int value);
+    void on_PhaseValueChanged(int value);
 
 private:
     void showStatusMessage(const QString &message);
