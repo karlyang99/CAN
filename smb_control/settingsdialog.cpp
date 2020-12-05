@@ -1,4 +1,4 @@
-/****************************************************************************
+﻿/****************************************************************************
 **
 ** Copyright (C) 2012 Denis Shienkov <denis.shienkov@gmail.com>
 ** Copyright (C) 2012 Laszlo Papp <lpapp@kde.org>
@@ -55,7 +55,7 @@
 #include <QtSerialPort/QSerialPortInfo>
 #include <QIntValidator>
 #include <QLineEdit>
-// #include <QDebug>
+#include <QDebug>
 
 QT_USE_NAMESPACE
 
@@ -113,6 +113,7 @@ void SettingsDialog::showPortInfo(int idx)
 void SettingsDialog::apply()
 {
     updateSettings();
+    emit pwmChanged(0);
     hide();
 }
 
@@ -221,6 +222,13 @@ void SettingsDialog::updateSettings()
     currentSettings.stringFlowControl = ui->flowControlBox->currentText();
 
     currentSettings.localEchoEnabled = ui->localEchoCheckBox->isChecked();
+
+    currentSettings.hzMin = ui->HzMinBox->value();
+    currentSettings.hzMax = ui->HzMaxBox->value();
+    currentSettings.voltageMin = ui->VolMinBox->value();
+    currentSettings.voltageMax = ui->VolMaxBox->value();
+    currentSettings.phaseMin = ui->PhaseMinBox->value();
+    currentSettings.phaseMax = ui->PhaseMaxBox->value();
 }
 
 /*
@@ -247,3 +255,33 @@ void SettingsDialog::on_horizontalSlider_valueChanged(int value)
     g_writeData(temp.toUtf8());
 }
 */
+
+void SettingsDialog::on_HzMinBox_valueChanged(int arg1)
+{
+   qDebug() << arg1;
+}
+
+void SettingsDialog::on_HzMaxBox_valueChanged(int arg1)
+{
+   qDebug() << arg1;
+}
+
+void SettingsDialog::on_VolMinBox_valueChanged(int arg1)
+{
+   qDebug() << arg1;
+}
+
+void SettingsDialog::on_PhaseMinBox_valueChanged(int arg1)
+{
+   qDebug() << arg1;
+}
+
+void SettingsDialog::on_PhaseMaxBox_valueChanged(int arg1)
+{
+   qDebug() << arg1;
+}
+
+void SettingsDialog::on_VolMaxBox_valueChanged(int arg1)
+{
+   qDebug() << arg1;
+}

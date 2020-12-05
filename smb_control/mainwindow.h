@@ -67,11 +67,11 @@
 #define SMB_WIDTH3   70
 
 
-#define SMB_F_MIN    40
+#define SMB_F_MIN    45
 #define SMB_F_VAL    50
-#define SMB_F_MAX    70
+#define SMB_F_MAX    55
 
-#define SMB_V_MIN    90
+#define SMB_V_MIN    100
 #define SMB_V_VAL    110
 #define SMB_V_MAX    120
 
@@ -123,6 +123,7 @@ private slots:
     void setVoltageMaximum(int value);
     void setPhaseMinimum(int value);
     void setPhaseMaximum(int value);
+    void onApply(int value);
 
     void handleError(QSerialPort::SerialPortError error);
 
@@ -133,7 +134,7 @@ private:
 private:
     void showStatusMessage(const QString &message);
     void createScrollBars(const QString &title);
-    void createSettings(const QString &title);
+    // void createSettings(const QString &title);
 
     Ui::MainWindow *ui;
     QLabel *status;
@@ -150,6 +151,7 @@ private:
     QScrollBar *voltage;
     QScrollBar *phase;
 
+    /*
     QGroupBox *settingsGroup;
     QLabel *minFrequencyLabel;
     QLabel *maxFrequencyLabel;
@@ -163,7 +165,7 @@ private:
     QLabel *maxPhaseLabel;
     QSpinBox *minPhaseBox;
     QSpinBox *maxPhaseBox;
-
+    */
     SettingsDialog *settings;
     QSerialPort *serial;
 };

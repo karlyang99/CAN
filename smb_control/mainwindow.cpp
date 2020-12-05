@@ -83,9 +83,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->centralWidget->layout()->addWidget(scrollBarsGroup);
     scrollBarsGroup->setEnabled(false);
 
-    createSettings(tr("Range Settings"));
-    ui->centralWidget->layout()->addWidget(settingsGroup);
-    settingsGroup->setEnabled(false);
+    // createSettings(tr("Range Settings"));
+    // ui->centralWidget->layout()->addWidget(settingsGroup);
+    // settingsGroup->setEnabled(false);
 
 //! [1]
     serial = new QSerialPort(this);
@@ -180,6 +180,7 @@ void MainWindow::createScrollBars(const QString &title)
     scrollBarsGroup->setLayout(scrollBarsLayout);
 }
 
+/*
 void MainWindow::createSettings(const QString &title)
 {
     settingsGroup = new QGroupBox(title);
@@ -251,6 +252,7 @@ void MainWindow::createSettings(const QString &title)
     settingsLayout->setAlignment(Qt::AlignLeft);
     settingsGroup->setLayout(settingsLayout);
 }
+*/
 
 void MainWindow::setFrequencyMinimum(int value)
 {
@@ -339,6 +341,24 @@ void MainWindow::onPhaseSpinChanged(int value)
     phase->setValue(value);
 }
 
+void MainWindow::onApply(int value)
+{
+    SettingsDialog::Settings p = settings->settings();
+    qDebug() << p.hzMin;
+    frequency->setMinimum(p.hzMin);
+    frequency->setMaximum(p.hzMax);
+    voltage->setMinimum(p.voltageMin);
+    voltage->setMaximum(p.voltageMax);
+    phase->setMinimum(p.phaseMin);
+    phase->setMaximum(p.phaseMax);
+    frequencySpin->setMinimum(p.hzMin);
+    frequencySpin->setMaximum(p.hzMax);
+    voltageSpin->setMinimum(p.voltageMin);
+    voltageSpin->setMaximum(p.voltageMax);
+    phaseSpin->setMinimum(p.phaseMin);
+    phaseSpin->setMaximum(p.phaseMax);
+}
+
 MainWindow::~MainWindow()
 {
     delete settings;
@@ -362,7 +382,7 @@ void MainWindow::openSerialPort()
         ui->actionDisconnect->setEnabled(true);
         ui->actionConfigure->setEnabled(false);
         scrollBarsGroup->setEnabled(true);
-        settingsGroup->setEnabled(true);
+        // settingsGroup->setEnabled(true);
         showStatusMessage(tr("Connected to %1 : %2, %3, %4, %5, %6")
                           .arg(p.name).arg(p.stringBaudRate).arg(p.stringDataBits)
                           .arg(p.stringParity).arg(p.stringStopBits).arg(p.stringFlowControl));
@@ -384,7 +404,7 @@ void MainWindow::closeSerialPort()
     ui->actionDisconnect->setEnabled(false);
     ui->actionConfigure->setEnabled(true);
     scrollBarsGroup->setEnabled(false);
-    settingsGroup->setEnabled(false);
+    // settingsGroup->setEnabled(false);
     showStatusMessage(tr("Disconnected"));
 }
 //! [5]
@@ -431,6 +451,8 @@ void MainWindow::initActionsConnections()
     connect(ui->actionClear, &QAction::triggered, console, &Console::clear);
     connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::about);
     connect(ui->actionAboutQt, &QAction::triggered, qApp, &QApplication::aboutQt);
+
+    connect(settings, SIGNAL(pwmChanged(int)), this, SLOT(onApply(int)));
 }
 
 void MainWindow::showStatusMessage(const QString &message)

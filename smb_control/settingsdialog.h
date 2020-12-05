@@ -85,12 +85,21 @@ public:
         QSerialPort::FlowControl flowControl;
         QString stringFlowControl;
         bool localEchoEnabled;
+        int hzMin;
+        int hzMax;
+        int voltageMin;
+        int voltageMax;
+        int phaseMin;
+        int phaseMax;
     };
 
     explicit SettingsDialog(QWidget *parent = nullptr);
     ~SettingsDialog();
 
     Settings settings() const;
+
+signals:
+    void pwmChanged(int value);
 
 private slots:
     void showPortInfo(int idx);
@@ -99,6 +108,18 @@ private slots:
     void checkCustomDevicePathPolicy(int idx);
 
     // void on_horizontalSlider_valueChanged(int value);
+
+    void on_HzMinBox_valueChanged(int arg1);
+
+    void on_HzMaxBox_valueChanged(int arg1);
+
+    void on_VolMinBox_valueChanged(int arg1);
+
+    void on_PhaseMinBox_valueChanged(int arg1);
+
+    void on_PhaseMaxBox_valueChanged(int arg1);
+
+    void on_VolMaxBox_valueChanged(int arg1);
 
 private:
     void fillPortsParameters();
